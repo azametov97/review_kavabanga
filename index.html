@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Оставить отзыв - KAVABANGA</title>
+    
+    <!-- Подключаем Tailwind CSS через CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Настройка Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Подключаем шрифт Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Стили для Glassmorphism */
+        .glass-btn-header {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .glass-btn-secondary {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        /* Анимации и стили звезд */
+        .star-icon {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .star-active {
+            fill: #FFD500;
+            filter: drop-shadow(0 0 12px rgba(255, 213, 0, 0.5));
+            transform: scale(1.1);
+        }
+
+        .star-inactive {
+            fill: rgba(255, 255, 255, 0.08);
+            stroke: rgba(255, 255, 255, 0.2);
+            transform: scale(1);
+        }
+    </style>
+</head>
+<body class="bg-[#111] text-white min-h-[100dvh] flex justify-center items-center antialiased">
+    
+    <!-- Главный контейнер приложения. На мобилках занимает весь экран, на десктопе выглядит как телефон -->
+    <div class="relative w-full h-[100dvh] sm:h-[844px] sm:max-h-[100dvh] sm:w-[390px] sm:rounded-[40px] sm:border-[8px] sm:border-black overflow-hidden flex flex-col bg-gradient-to-b from-[#56575b] via-[#3a393c] to-[#252423] shadow-2xl">
+        
+        <!-- Шапка (Header) -->
+        <header class="relative z-20 w-full flex justify-between items-center px-5 py-5">
+            <!-- Кнопка Telegram -->
+            <a href="https://t.me/kavabangacrimea" class="glass-btn-header px-4 py-1.5 rounded-full text-[13px] font-medium tracking-wide transition-colors hover:bg-white/10">телеграм</a>
+            
+            <!-- Логотип KAVABANGA -->
+            <div class="flex flex-col items-center justify-center">
+                <img src="./главный лого светлый 1.svg" alt="KAVABANGA" class="h-[25px] w-auto object-contain drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]" />
+            </div>
+
+            <!-- Кнопка Таплинк -->
+            <a href="https://link.kavabanga-dessert.ru" class="glass-btn-header px-4 py-1.5 rounded-full text-[13px] font-medium tracking-wide transition-colors hover:bg-white/10">таплинк</a>
+        </header>
+
+        <!-- Обертка для динамического контента (Стейты) -->
+        <div class="relative flex-1 w-full flex flex-col">
+            
+            <!-- Стейт 1: Главный экран (Оценка) -->
+            <main id="state-rating" class="absolute inset-0 z-10 flex flex-col items-center px-5 pb-8 transition-all duration-500">
+                <div class="flex-1 flex flex-col items-center justify-center w-full mt-4">
+                    <h1 id="main-title" class="text-[26px] font-semibold text-center mb-4 leading-[1.2]">Как вы оцениваете визит<br>в кавабанга ак-мечеть?</h1>
+                    <p class="text-[14px] text-center text-white/70 mb-12 leading-snug">Мы видим каждый отзыв<br>и хотим стать вашим любимым местом</p>
+
+                    <!-- Контейнер для звезд -->
+                    <div class="flex items-center justify-center gap-[6px] mb-8" id="stars-container">
+                        <!-- Звезды генерируются через JS -->
+                    </div>
+                </div>
+
+                <!-- Кнопки действий -->
+                <div class="w-full flex flex-col gap-3 mt-auto">
+                    <!-- Кнопка отправить отзыв (изначально отключена) -->
+                    <button id="btn-submit" disabled class="w-full py-4 rounded-[2rem] bg-white text-black font-semibold text-[17px] transition-all duration-300 disabled:opacity-50 disabled:scale-100 hover:scale-[1.02] active:scale-[0.98]">
+                        Отправить отзыв
+                    </button>
+                    <!-- Кнопка написать управляющему -->
+                    <a href="https://t.me/bekarslan" class="w-full py-4 rounded-[2rem] glass-btn-secondary text-center font-medium text-[17px] text-white transition-all duration-300 hover:bg-white/20 active:scale-[0.98]">
+                        Написать управляющему
+                    </a>
+                </div>
+            </main>
+
+            <!-- Стейт 2/3: Экран обратной связи (Карточка) -->
+            <div id="state-feedback" class="absolute inset-0 z-20 flex flex-col items-center px-5 opacity-0 pointer-events-none transition-all duration-500 translate-y-4 pb-8">
+                
+                <!-- Центрирование карточки -->
+                <div class="flex-1 w-full flex items-center justify-center">
+                    <div class="glass-card w-full px-6 py-10 rounded-[32px] flex flex-col items-center text-center">
+                        <h2 id="feedback-title" class="text-[24px] font-semibold mb-4 leading-[1.2]"></h2>
+                        <p id="feedback-text" class="text-[14px] text-white/80 mb-8 leading-[1.4]"></p>
+                        
+                        <a id="feedback-link" href="#" class="w-full h-14 rounded-[2rem] bg-white text-black font-semibold text-[16px] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2">
+                            <!-- Иконка и текст генерируются через JS -->
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Логика приложения (Стейт-машина) -->
+    <script>
+        // --- КОНФИГУРАЦИЯ КОФЕЕН ---
+        const shopsConfig = {
+            'ak-mechet': {
+                titleName: 'в кавабанга ак-мечеть?',
+                mapLink: 'https://yandex.ru/maps/-/CPGtZWL6'
+            },
+            'evpatoria': {
+                titleName: 'в кавабанга евпатория?',
+                mapLink: 'ВСТАВЬ_ССЫЛКУ_ЕВПАТОРИЯ'
+            },
+            'bakhchisaray': {
+                titleName: 'в кавабанга бахчисарай?',
+                mapLink: 'ВСТАВЬ_ССЫЛКУ_БАХЧИСАРАЙ'
+            },
+            'franko': {
+                titleName: 'в кавабанга на франко?',
+                mapLink: 'ВСТАВЬ_ССЫЛКУ_ФРАНКО'
+            },
+            'pushkina': {
+                titleName: 'в кавабанга на пушкина?',
+                mapLink: 'ВСТАВЬ_ССЫЛКУ_ПУШКИНА'
+            },
+            'saki': {
+                titleName: 'в кавабанга саки?',
+                mapLink: 'ВСТАВЬ_ССЫЛКУ_САКИ'
+            },
+            'default': {
+                titleName: 'в KAVABANGA?',
+                mapLink: 'https://yandex.ru/maps/-/CPGtZWL6'
+            }
+        };
+
+        // --- ТЕЛЕГРАМ НАСТРОЙКИ ---
+        const TG_BOT_TOKEN = '8077610151:AAHlLvBNoYJ6psIRYcDp-Zdlkhr1DSYfyyA';
+        const TG_CHAT_ID = '-5155949106'; // ID группы "Отзывы от людей кавабанга"
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Читаем URL параметры (?shop=ak-mechet)
+            const urlParams = new URLSearchParams(window.location.search);
+            const shopId = urlParams.get('shop') || 'default';
+            const currentShop = shopsConfig[shopId] || shopsConfig['default'];
+
+            // Подставляем название кофейни в заголовок
+            const mainTitle = document.getElementById('main-title');
+            if (mainTitle) {
+                mainTitle.innerHTML = `Как вы оцениваете визит<br>${currentShop.titleName}`;
+            }
+
+            const starsContainer = document.getElementById('stars-container');
+            const submitBtn = document.getElementById('btn-submit');
+            
+            const stateRating = document.getElementById('state-rating');
+            const stateFeedback = document.getElementById('state-feedback');
+            
+            const feedbackTitle = document.getElementById('feedback-title');
+            const feedbackText = document.getElementById('feedback-text');
+            const feedbackLink = document.getElementById('feedback-link');
+            
+            let currentRating = 0;
+
+            // 1. Генерация 5 звезд
+            for (let i = 1; i <= 5; i++) {
+                const starWrapper = document.createElement('div');
+                starWrapper.className = 'cursor-pointer p-1';
+                
+                // SVG иконка звезды
+                starWrapper.innerHTML = `
+                    <svg class="star-icon star-inactive w-[46px] h-[46px]" data-val="${i}" viewBox="0 0 24 24" stroke-width="1" stroke-linejoin="round" stroke-linecap="round" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385c.114.476-.414.86-.84.607L12 17.653a.563.563 0 00-.53 0l-4.992 2.88c-.426.253-.954-.131-.84-.607l1.285-5.385a.563.563 0 00-.182-.557l-4.204-3.602c-.38-.325-.178-.948.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                    </svg>
+                `;
+                starsContainer.appendChild(starWrapper);
+
+                // Обработчики событий для десктопа (hover)
+                starWrapper.addEventListener('mouseenter', () => updateVisualStars(i));
+                starWrapper.addEventListener('mouseleave', () => updateVisualStars(currentRating));
+                
+                // Обработчики кликов и тапов
+                starWrapper.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    setRating(i);
+                });
+                
+                starWrapper.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    setRating(i);
+                }, {passive: false});
+            }
+
+            // Функция обновления визуального состояния звезд
+            function updateVisualStars(rating) {
+                const stars = document.querySelectorAll('.star-icon');
+                stars.forEach((star, index) => {
+                    const val = index + 1;
+                    if (val <= rating) {
+                        star.classList.remove('star-inactive');
+                        star.classList.add('star-active');
+                    } else {
+                        star.classList.remove('star-active');
+                        star.classList.add('star-inactive');
+                    }
+                });
+            }
+
+            // Функция установки оценки (стейт)
+            function setRating(rating) {
+                currentRating = rating;
+                updateVisualStars(currentRating);
+                
+                // Активируем кнопку отправки
+                submitBtn.disabled = false;
+            }
+
+            // Отправка данных в Telegram
+            async function saveReviewToTelegram(rating) {
+                if (TG_CHAT_ID === 'YOUR_CHAT_ID') return;
+
+                // Формируем красивые звездочки для сообщения
+                const stars = '⭐️'.repeat(rating) + '🌑'.repeat(5 - rating);
+                // Очищаем название от лишних слов
+                const shopName = currentShop.titleName.replace('в ', '').replace('?', '').toUpperCase();
+                
+                const text = `🔔 <b>Новая оценка!</b>\n\n📍 Кофейня: <b>${shopName}</b>\nОценка: ${stars} (${rating}/5)\n📅 Время: ${new Date().toLocaleString('ru-RU', {timeZone: 'Europe/Moscow'})}`;
+
+                try {
+                    await fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            chat_id: TG_CHAT_ID,
+                            text: text,
+                            parse_mode: 'HTML'
+                        })
+                    });
+                } catch (e) {
+                    console.error('Ошибка отправки в Telegram:', e);
+                }
+            }
+
+            // 2. Обработка клика "Отправить отзыв"
+            submitBtn.addEventListener('click', () => {
+                if (currentRating === 0) return;
+
+                // Отправляем в Telegram в фоне
+                saveReviewToTelegram(currentRating);
+
+                // Скрываем первый стейт (fade-out + сдвиг вверх)
+                stateRating.classList.add('opacity-0', '-translate-y-4', 'pointer-events-none');
+                
+                // Ждем окончания анимации скрытия (400мс) перед показом следующего
+                setTimeout(() => {
+                    
+                    // Проверяем логику оценок
+                    if (currentRating <= 2) {
+                        // Состояние "Негатив" (1, 2 звезды)
+                        feedbackTitle.innerHTML = 'Нам очень жаль,<br>что мы вас расстроили';
+                        feedbackText.innerHTML = 'Пожалуйста, напишите нам напрямую.<br>Мы лично читаем все сообщения,<br>оперативно разбираемся в ситуации и<br>проводим работу над ошибками.';
+                        feedbackLink.href = 'https://t.me/bekarslan';
+                        feedbackLink.innerHTML = '<span class="font-semibold">Написать управляющему</span>';
+                    } else if (currentRating <= 4) {
+                        // Состояние "Нейтрально" (3, 4 звезды)
+                        feedbackTitle.innerHTML = 'Помогите нам<br>стать лучше';
+                        feedbackText.innerHTML = 'Мы ценим честную обратную связь.<br>Расскажите управляющему, чего вам не хватило до идеала — мы лично читаем все сообщения и постоянно работаем над качеством.';
+                        feedbackLink.href = 'https://t.me/bekarslan';
+                        feedbackLink.innerHTML = '<span class="font-semibold">Написать управляющему</span>';
+                    } else {
+                        // Состояние "Позитив" (5 звезд)
+                        feedbackTitle.innerHTML = 'Спасибо за высокую<br>оценку!';
+                        feedbackText.innerHTML = 'Мы очень старались!<br>Помогите другим гостям узнать о нас —<br>поддержите KAVABANGA небольшим<br>отзывом на Яндекс Картах.';
+                        feedbackLink.href = currentShop.mapLink;
+                        
+                        // Добавляем иконку пина Яндекса
+                        feedbackLink.innerHTML = `
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="#FF3333" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                            </svg>
+                            <span class="font-semibold">Открыть яндекс карты</span>
+                        `;
+                    }
+
+                    // Показываем карточку обратной связи (fade-in + сдвиг на место)
+                    stateFeedback.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+                    stateFeedback.classList.add('opacity-100', 'translate-y-0');
+                    
+                }, 400); 
+            });
+        });
+    </script>
+</body>
+</html>
