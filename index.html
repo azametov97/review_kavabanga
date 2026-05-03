@@ -101,7 +101,19 @@
             <!-- Стейт 1: Главный экран (Оценка) -->
             <main id="state-rating" class="absolute inset-0 z-10 flex flex-col items-center px-5 pb-6 transition-all duration-500">
                 <div class="flex-1 flex flex-col items-center justify-center w-full mt-2">
-                    <h1 id="main-title" class="text-[24px] font-semibold text-center mb-3 leading-[1.2]">Как вы оцениваете визит<br>в кавабанга ак-мечеть?</h1>
+                    
+                    <!-- Пилл с локацией -->
+                    <div class="flex items-center justify-center mb-4">
+                        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-[12px] bg-white/5 border border-white/10 text-[11px] font-medium text-white/90 uppercase tracking-wider">
+                            <svg class="w-[14px] h-[14px] opacity-80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                            <span id="shop-location">Локация</span>
+                        </div>
+                    </div>
+
+                    <h1 class="text-[26px] font-semibold text-center mb-3 leading-[1.2] tracking-tight">Как вам в кавабанге?</h1>
                     <p class="text-[13px] text-center text-white/70 mb-8 leading-snug font-light">Мы видим каждый отзыв<br>и хотим стать вашим любимым местом</p>
 
                     <!-- Контейнер для звезд -->
@@ -169,31 +181,31 @@
         // --- КОНФИГУРАЦИЯ КОФЕЕН ---
         const shopsConfig = {
             'ak-mechet': {
-                titleName: 'в кавабанга ак-мечеть?',
+                locationName: 'Ак-мечеть',
                 mapLink: 'https://yandex.ru/maps/-/CPGtZWL6'
             },
             'evpatoria': {
-                titleName: 'в кавабанга евпатория?',
+                locationName: 'Евпатория',
                 mapLink: 'ВСТАВЬ_ССЫЛКУ_ЕВПАТОРИЯ'
             },
             'bakhchisaray': {
-                titleName: 'в кавабанга бахчисарай?',
+                locationName: 'Бахчисарай',
                 mapLink: 'ВСТАВЬ_ССЫЛКУ_БАХЧИСАРАЙ'
             },
             'franko': {
-                titleName: 'в кавабанга на франко?',
+                locationName: 'на Франко',
                 mapLink: 'ВСТАВЬ_ССЫЛКУ_ФРАНКО'
             },
             'pushkina': {
-                titleName: 'в кавабанга на пушкина?',
+                locationName: 'на Пушкина',
                 mapLink: 'ВСТАВЬ_ССЫЛКУ_ПУШКИНА'
             },
             'saki': {
-                titleName: 'в кавабанга саки?',
+                locationName: 'Саки',
                 mapLink: 'ВСТАВЬ_ССЫЛКУ_САКИ'
             },
             'default': {
-                titleName: 'в KAVABANGA?',
+                locationName: 'Симферополь',
                 mapLink: 'https://yandex.ru/maps/-/CPGtZWL6'
             }
         };
@@ -209,10 +221,10 @@
             const shopId = urlParams.get('shop') || 'default';
             const currentShop = shopsConfig[shopId] || shopsConfig['default'];
 
-            // Подставляем название кофейни в заголовок
-            const mainTitle = document.getElementById('main-title');
-            if (mainTitle) {
-                mainTitle.innerHTML = `Как вы оцениваете визит<br>${currentShop.titleName}`;
+            // Устанавливаем локацию в пилл
+            const locSpan = document.getElementById('shop-location');
+            if (locSpan) {
+                locSpan.textContent = currentShop.locationName;
             }
 
             const starsContainer = document.getElementById('stars-container');
@@ -288,8 +300,8 @@
 
                 // Формируем красивые звездочки для сообщения
                 const stars = '⭐️'.repeat(rating) + '🌑'.repeat(5 - rating);
-                // Очищаем название от лишних слов
-                const shopName = currentShop.titleName.replace('в ', '').replace('?', '').toUpperCase();
+                // Название для ТГ
+                const shopName = 'КАВАБАНГА ' + currentShop.locationName.toUpperCase();
                 
                 let text = `🔔 <b>Новая оценка!</b>\n\n📍 Кофейня: <b>${shopName}</b>\nОценка: ${stars} (${rating}/5)\n📅 Время: ${new Date().toLocaleString('ru-RU', {timeZone: 'Europe/Moscow'})}`;
 
