@@ -336,7 +336,7 @@
                 const oneHourAgo = Date.now() - 3600000;
                 timestamps = timestamps.filter(t => t > oneHourAgo);
                 
-                if (timestamps.length >= 2) {
+                if (timestamps.length >= 5) {
                     // Спам блок
                     stateRating.classList.add('opacity-0', '-translate-y-4', 'pointer-events-none');
                     setTimeout(() => {
